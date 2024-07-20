@@ -59,7 +59,10 @@ const init = async () => {
     method: 'GET',
     path: '/',
     handler: (request, h) => {
-      return `Hi, ${process.env.APPNAME}`;
+      return {
+        status: 'success',
+        message: 'hi, from medomeckz',
+      }
     },
   });
 
