@@ -60,6 +60,10 @@ class ProductsService {
 
     return result.rows;
   }
+  async getCountProducts() {
+    const result = await this._pool.query('SELECT COUNT(id) as count FROM products');
+    return result.rows[0];
+  }
 
   async getProductById(id) {
     const query = {

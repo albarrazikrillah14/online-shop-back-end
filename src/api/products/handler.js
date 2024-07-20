@@ -68,10 +68,12 @@ class ProductsHandler {
     const { limit = 10, offset = 0 } = request.query;
 
     const products = await this._service.getProducts(limit, offset);
+    const countProducts = await this._service.getCountProducts();
 
     return {
       status: 'success',
       data: {
+        count: countProducts.count,
         products
       }
     };
