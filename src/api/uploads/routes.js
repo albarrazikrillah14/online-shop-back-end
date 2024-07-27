@@ -16,12 +16,8 @@ const routes = (handler) => [
   },
   {
     method: 'GET',
-    path: '/upload/{param*}',
-    handler: {
-      directory: {
-        path: path.resolve(__dirname, 'file'),
-      },
-    },
+    path: '/upload/{filename}',
+    handler: handler.getUploadImageHandler,
   },
 
 ];

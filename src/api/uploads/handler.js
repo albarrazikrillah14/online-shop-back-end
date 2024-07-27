@@ -1,9 +1,12 @@
+const path = require('path');
+
 class UploadsHandler {
   constructor(service, validator) {
     this._service = service;
     this._validator = validator;
 
     this.postUploadImageHandler = this.postUploadImageHandler.bind(this);
+    this.getUploadImageHandler = this.getUploadImageHandler.bind(this);
   }
 
   async postUploadImageHandler(request, h) {
@@ -24,6 +27,20 @@ class UploadsHandler {
       return response;
     } catch (error) {
       return error.message;
+    }
+  }
+
+  async getUploadImageHandler(request) {
+    const { filename } = request.params;
+
+
+    const result =  await this._service.readFile(filename);
+
+    return {
+      status: 'succes',
+      data: {
+        image: result,
+      }
     }
   }
 }
