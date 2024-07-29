@@ -6,8 +6,7 @@ class UploadsHandler {
     this._validator = validator;
 
     this.postUploadImageHandler = this.postUploadImageHandler.bind(this);
-    this.getUploadImageHandler = this.getUploadImageHandler.bind(this);
-  }
+    }
 
   async postUploadImageHandler(request, h) {
     try {
@@ -19,7 +18,7 @@ class UploadsHandler {
       const response = h.response({
         status: 'success',
         data: {
-          fileLocation,
+          fileLocation: `http://${process.env.HOST}:${process.env.PORT}/upload/images/${fileLocation}`,
         },
       });
 
@@ -27,20 +26,6 @@ class UploadsHandler {
       return response;
     } catch (error) {
       return error.message;
-    }
-  }
-
-  async getUploadImageHandler(request) {
-    const { filename } = request.params;
-
-
-    const result =  await this._service.readFile(filename);
-
-    return {
-      status: 'succes',
-      data: {
-        image: result,
-      }
     }
   }
 }
