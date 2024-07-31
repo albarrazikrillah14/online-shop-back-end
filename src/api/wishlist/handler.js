@@ -1,7 +1,8 @@
 class WishlistHandler {
-  constructor(service, validator) {
+  constructor(service, productsService, validator) {
     this._service = service;
     this._validator = validator;
+    this._productsService = productsService;
 
     this.postWishlistHandler = this.postWishlistHandler.bind(this);
     this.putWishlistByIdHandler = this.putWishlistByIdHandler.bind(this);
@@ -11,22 +12,25 @@ class WishlistHandler {
   }
 
   async postWishlistHandler(request, h) {
-    this._validator.validatePostWishlistPayload(request.payload);
+   
+      this._validator.validatePostWishlistPayload(request.payload);
 
-    const { orderQuantity, productId } = request.payload;
-    const { id: userId } = request.auth.credentials;
+      const { orderQuantity, productId } = request.payload;
+      const { id: userId } = request.auth.credentials;
 
-    const wishlistId = await this._service.addWishlist(userId, productId, orderQuantity);
+      await this._productsService.verifyProductExist(productId);
+      const wishlistId = await this._service.addWishlist(userId, productId, orderQuantity);
+  
+      const response = h.response({
+        status: 'success',
+        data: {
+          wishlistId,
+        }
+      });
+  
+      response.code(201);
+      return response;
 
-    const response = h.response({
-      status: 'success',
-      data: {
-        wishlistId,
-      }
-    });
-
-    response.code(201);
-    return response;
   }
 
   async putWishlistByIdHandler(request) { 
@@ -34,6 +38,8 @@ class WishlistHandler {
 
     const { id: wishlisthId } = request.params;
     const {id: ownerId } = request.auth.credentials;
+
+    await this._productsService.verifyProductExist(productId);
     await this._service.verifyWishlistOwner(wishlisthId, ownerId);
 
     const { orderQuantity } = request.payload;
@@ -49,8 +55,9 @@ class WishlistHandler {
   async deleteWishlistByIdHandler(request) {
     const { id: wishlisthId } = request.params;
     const {id: ownerId } = request.auth.credentials;
-    await this._service.verifyWishlistOwner(wishlisthId, ownerId);
 
+    await this._productsService.verifyProductExist(productId);
+    await this._service.verifyWishlistOwner(wishlisthId, ownerId);
     await this._service.deleteWishlistById(wishlisthId);
 
     return {
@@ -75,8 +82,8 @@ class WishlistHandler {
     try {
       const { id: wishlisthId } = request.params;
     const {id: ownerId } = request.auth.credentials;
+    
     await this._service.verifyWishlistOwner(wishlisthId, ownerId);
-
     const wishlist = await this._service.getWishlistById(wishlisthId);
 
     return {

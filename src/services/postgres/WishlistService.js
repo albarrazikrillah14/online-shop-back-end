@@ -10,8 +10,10 @@ class WishlistService {
   }
 
   async addWishlist(userId, productId, orderQuantity) {
-    const id = `wishlist-${nanoid(16)}`;
 
+    await this.verifyWishlishAlreadyExist(productId);
+    
+    const id = `wishlist-${nanoid(16)}`;
     const query = {
       text: 'INSERT INTO wishlist VALUES($1, $2, $3, $4) RETURNING id',
       values: [id, userId, productId, orderQuantity]
@@ -45,7 +47,7 @@ class WishlistService {
 
   async getWishlist(ownerId) {
     const query = {
-      text: "SELECT wishlist.id, products.name, wishlist.order_quantity as quantity FROM wishlist JOIN products ON wishlist.product_id = products.id WHERE wishlist.user_id = $1",
+      text: "SELECT wishlist.id, products.id as product_id, products.name, wishlist.order_quantity as quantity FROM wishlist JOIN products ON wishlist.product_id = products.id WHERE wishlist.user_id = $1",
       values: [ownerId]
     };
 
@@ -56,7 +58,7 @@ class WishlistService {
 
   async getWishlistById(wishlistId) {
     const query = {
-      text: "SELECT wishlist.id, products.name, wishlist.order_quantity as quantity FROM wishlist JOIN products ON wishlist.product_id = products.id WHERE wishlist.id = $1",
+      text: "SELECT wishlist.id, products.id as product_id, products.name, wishlist.order_quantity as quantity FROM wishlist JOIN products ON wishlist.product_id = products.id WHERE wishlist.id = $1",
       values: [wishlistId]
     };
 
@@ -83,6 +85,19 @@ class WishlistService {
     
     if(!match) {
       throw new ForbiddenError('anda tidak punya hak');
+    }
+  }
+
+  async verifyWishlishAlreadyExist(productId) {
+    const query = {
+      text: 'SELECT id FROM wishlist WHERE product_id = $1',
+      values: [productId]
+    };
+
+    const result = await this._pool.query(query);
+
+    if (result.rows.length) {
+      throw new InvariantError('Anda sudah memasukkan product ke keranjang');
     }
   }
 }

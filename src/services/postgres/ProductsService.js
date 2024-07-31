@@ -79,6 +79,20 @@ class ProductsService {
 
     return result.rows[0];
   }
+
+  async verifyProductExist(id) {
+    const query = {
+      text: 'SELECT id FROM products WHERE id = $1',
+      values: [id],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (!result.rows.length) {
+      throw  new NotFoundError('Produk tidak ditemukan');
+    }
+  }
+
 }
 
 module.exports = ProductsService;

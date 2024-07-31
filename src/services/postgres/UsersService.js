@@ -4,6 +4,7 @@ const { Pool } = require("pg");
 const bcrypt = require('bcrypt');
 const InvariantError = require("../../exceptions/InvariantError");
 const AuthenticationError = require("../../exceptions/AuthenticationError");
+const NotFoundError = require("../../exceptions/NotFoundError");
 
 class UsersService {
   constructor() {
@@ -81,7 +82,30 @@ class UsersService {
       roleId: roleId
      }
     };
+  }
 
+  async getProfile(userId) {
+    const query = {
+      text: 'SELECT email, fullname, phonenumber, address FROM users WHERE id = $1',
+      values: [userId]
+    };
+
+    const result = await this._pool.query(query);
+    
+    return result.rows[0];
+  }
+
+  async editProfile(userId, { email, fullname, phonenumber, address }) {
+    const query = {
+      text: 'UPDATE users SET email = $1, fullname = $2, phonenumber = $3, address = $4 WHERE id = $5 RETURNING id',
+      values: [email, fullname, phonenumber, address, userId]
+    };
+
+    const result = await this._pool.query(query);
+
+    if(!result.rows.length) {
+      throw new NotFoundError('user tidak ditemukan');
+    }
   }
 }
 

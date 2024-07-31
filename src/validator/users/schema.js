@@ -8,4 +8,13 @@ const UserPayloadSchema = Joi.object({
   roleId: Joi.number().integer().required(),
 });
 
-module.exports = UserPayloadSchema;
+const ProfilePayloadSchema = Joi.object({
+  email: Joi.string().email().required(),
+  fullname: Joi.string().required(),
+  phonenumber: Joi.string()
+    .regex(/^\+?([ -]?\d+)+|\(\d+\)([ -]\d+)$/)
+    .required(),
+  address: Joi.array().items(Joi.string()).required(),
+});
+
+module.exports = { UserPayloadSchema, ProfilePayloadSchema };

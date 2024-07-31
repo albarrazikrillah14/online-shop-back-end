@@ -130,6 +130,7 @@ const init = async () => {
       plugin: wishlist,
       options: {
         service: wishlistService,
+        productsService: productsService,
         validator: WishlistValidator,
       }
     },
@@ -144,8 +145,6 @@ const init = async () => {
 
   server.ext('onPreResponse', (request, h) => {
     const { response } = request;
-
-    console.log(request.params);
     
     if (response instanceof ClientError) {
       const newResponse = h.response({
