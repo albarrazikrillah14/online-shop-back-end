@@ -29,8 +29,7 @@ class UsersHandler {
 
   async getUserHandler(request) {
 
-    try {
-      const { id: userId } = request.auth.credentials;
+    const { id: userId } = request.auth.credentials;
 
     const data = await this._service.getProfile(userId);
 
@@ -38,12 +37,10 @@ class UsersHandler {
       status: 'success',
       data,
     }
-    } catch (e) { return e.message }
   }
 
   async putUserHandler(request) {
-    try {
-      this._validator.validateProfilePayload(request.payload);
+    this._validator.validateProfilePayload(request.payload);
 
     const { id: userId } = request.auth.credentials;
 
@@ -53,7 +50,6 @@ class UsersHandler {
       status: 'success',
       message: 'berhasil mengubah profile',
     }
-    } catch (e) { return e.message }
   }
 }
 
