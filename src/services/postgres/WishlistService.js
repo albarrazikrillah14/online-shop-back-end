@@ -11,7 +11,7 @@ class WishlistService {
 
   async addWishlist(userId, productId, orderQuantity) {
 
-    await this.verifyWishlishAlreadyExist(productId);
+    await this.verifyWishlishAlreadyExist(productId, userId);
     
     const id = `wishlist-${nanoid(16)}`;
     const query = {
@@ -47,7 +47,7 @@ class WishlistService {
 
   async getWishlist(ownerId) {
     const query = {
-      text: "SELECT wishlist.id, products.id as product_id, products.name, wishlist.order_quantity as quantity FROM wishlist JOIN products ON wishlist.product_id = products.id WHERE wishlist.user_id = $1",
+      text: "SELECT wishlist.id, products.id as product_id, products.name, products.description, products.images, wishlist.order_quantity as quantity FROM wishlist JOIN products ON wishlist.product_id = products.id WHERE wishlist.user_id = $1",
       values: [ownerId]
     };
 
@@ -88,10 +88,10 @@ class WishlistService {
     }
   }
 
-  async verifyWishlishAlreadyExist(productId) {
+  async verifyWishlishAlreadyExist(productId, ownerId) {
     const query = {
-      text: 'SELECT id FROM wishlist WHERE product_id = $1',
-      values: [productId]
+      text: 'SELECT id FROM wishlist WHERE product_id = $1 AND user_id = $2',
+      values: [productId, ownerId]
     };
 
     const result = await this._pool.query(query);
