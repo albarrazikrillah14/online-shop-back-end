@@ -40,6 +40,7 @@ class UsersHandler {
   }
 
   async putUserHandler(request) {
+
     this._validator.validateProfilePayload(request.payload);
 
     const { id: userId } = request.auth.credentials;

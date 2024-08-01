@@ -96,6 +96,7 @@ class UsersService {
   }
 
   async editProfile(userId, { email, fullname, phonenumber, address }) {
+    await this.verifyEmailWhenUpdateProfile(email, userId);
     const query = {
       text: 'UPDATE users SET email = $1, fullname = $2, phonenumber = $3, address = $4 WHERE id = $5 RETURNING id',
       values: [email, fullname, phonenumber, address, userId]
@@ -105,6 +106,19 @@ class UsersService {
 
     if(!result.rows.length) {
       throw new NotFoundError('user tidak ditemukan');
+    }
+  }
+
+  async verifyEmailWhenUpdateProfile(email, ownerId) {
+    const query = {
+      text: 'SELECT id FROM users WHERE email = $1',
+      values: [email],
+    };
+
+    const result = await this._pool.query(query);
+
+    if(result.rows[0].id !== ownerId) {
+      throw new InvariantError('email tersebut sudah digunakan');
     }
   }
 }

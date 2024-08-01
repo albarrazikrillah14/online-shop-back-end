@@ -78,8 +78,7 @@ class WishlistHandler {
    }
 
    async getWishlistByIdhandler(request) {
-    try {
-      const { id: wishlisthId } = request.params;
+    const { id: wishlisthId } = request.params;
     const {id: ownerId } = request.auth.credentials;
     
     await this._service.verifyWishlistOwner(wishlisthId, ownerId);
@@ -91,7 +90,6 @@ class WishlistHandler {
         wishlist
       }
     };
-    } catch (error) { return error.message };
    }
 }
 
