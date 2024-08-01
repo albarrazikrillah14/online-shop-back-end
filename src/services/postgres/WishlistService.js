@@ -47,7 +47,7 @@ class WishlistService {
 
   async getWishlist(ownerId) {
     const query = {
-      text: "SELECT wishlist.id, products.id as product_id, products.name, products.description, products.images, wishlist.order_quantity as quantity FROM wishlist JOIN products ON wishlist.product_id = products.id WHERE wishlist.user_id = $1",
+      text: "SELECT wishlist.id, products.id as product_id, products.name, products.description, products.price, products.images, wishlist.order_quantity as quantity FROM wishlist JOIN products ON wishlist.product_id = products.id WHERE wishlist.user_id = $1",
       values: [ownerId]
     };
 
