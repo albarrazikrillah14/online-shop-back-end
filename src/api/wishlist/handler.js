@@ -18,7 +18,8 @@ class WishlistHandler {
       const { orderQuantity, productId } = request.payload;
       const { id: userId } = request.auth.credentials;
 
-      await this._productsService.verifyProductExist(productId);
+      await this._productsService.verifyProductAlreadyExist(productId, userId);
+
       const wishlistId = await this._service.addWishlist(userId, productId, orderQuantity);
   
       const response = h.response({
@@ -39,7 +40,6 @@ class WishlistHandler {
     const { id: wishlisthId } = request.params;
     const {id: ownerId } = request.auth.credentials;
 
-    await this._productsService.verifyProductExist(productId);
     await this._service.verifyWishlistOwner(wishlisthId, ownerId);
 
     const { orderQuantity } = request.payload;
@@ -56,7 +56,6 @@ class WishlistHandler {
     const { id: wishlisthId } = request.params;
     const {id: ownerId } = request.auth.credentials;
 
-    await this._productsService.verifyProductExist(productId);
     await this._service.verifyWishlistOwner(wishlisthId, ownerId);
     await this._service.deleteWishlistById(wishlisthId);
 

@@ -80,10 +80,10 @@ class ProductsService {
     return result.rows[0];
   }
 
-  async verifyProductExist(id) {
+  async verifyProductAlreadyExist(id, ownerId) {
     const query = {
-      text: 'SELECT id FROM products WHERE id = $1',
-      values: [id],
+      text: 'SELECT id FROM products WHERE id = $1 AND user_id = $2',
+      values: [id, ownerId],
     };
 
     const result = await this._pool.query(query);
