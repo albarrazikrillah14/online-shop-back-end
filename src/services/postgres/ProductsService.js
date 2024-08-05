@@ -27,7 +27,7 @@ class ProductsService {
 
   async editProduct(id, { name, price, description, images, ownerId }) {
     const query = {
-      text: 'UPDATE products SET name = $1, price = $2, description = $3, images = images || $4, user_id = $5 WHERE id = $6 RETURNING id',
+      text: 'UPDATE products SET name = $1, price = $2, description = $3, images = $4, user_id = $5 WHERE id = $6 RETURNING id',
       values: [name, price, description, images, ownerId, id]
     };
 
